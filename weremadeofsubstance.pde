@@ -1,25 +1,18 @@
-/* OpenProcessing Tweak of *@*http://www.openprocessing.org/sketch/117808*@* */
-/* !do not delete the line above, required for linking your tweak if you upload again */
-/* OpenProcessing Tweak of *@*http://www.openprocessing.org/sketch/117808*@* */
-/* !do not delete the line above, required for linking your tweak if you upload again */
-//Delaunay filter
-//A classic one in my own implementation.
-//Ale González, 2013
 
 import java.util.List;
 import java.util.LinkedList;
 
-int W = 800, H = 800;
+int W = displayWidth, H = displayHeight;
 int[] colors;
 ArrayList<Triangle> triangles;
 
 void setup() 
 {
-    size(800, 800);
+    size(displayWidth, displayHeight);
     smooth();
     
-    //Portrait of Jean-Charles de Cordes, by Rubens
-    PImage buffer = loadImage("r.jpg");
+    //here for all dataset
+    PImage buffer = loadImage("tomatoes.jpg");
 
     //Extract significant points of the picture
     ArrayList<PVector> vertices = new ArrayList<PVector>();
@@ -34,7 +27,7 @@ void setup()
     }
  
     //Get the triangles using qhull algorithm. 
-    //The algorithm is a custom refactoring of Triangulate library by Florian Jennet (a port of Paul Bourke... not surprisingly... :D) 
+    //The algorithm is a custom refactoring of Triangulate library by Florian Jennet  
     triangles = new ArrayList<Triangle>();
     new Triangulator().triangulate(vertices, triangles);
     
