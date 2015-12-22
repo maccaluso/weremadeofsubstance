@@ -5,7 +5,7 @@ import java.util.LinkedList;
 int W = displayWidth, H = displayHeight;
 int[] colors;
 ArrayList<Triangle> triangles;
-
+int triangle_index =0;
 void setup() 
 {
     size(displayWidth, displayHeight);
@@ -51,13 +51,30 @@ void setup()
     displayMesh();
 }
 
+void draw() {  // draw() loops forever, until stopped
+  background(204);
+    
+    Triangle t = new Triangle();
+    beginShape(TRIANGLES);
+     t = triangles.get(triangle_index); 
+     fill(colors[triangle_index]);
+     stroke(colors[triangle_index]);
+     vertex(t.p1.x,t.p1.y);
+     vertex(t.p2.x, t.p2.y);
+     vertex(t.p3.x, t.p3.y;
+    endShape();
+    triangle_index++;
+    if(triangle_index > t.s)
+}
+
+
 //Util function to prune triangles with vertices out of bounds  
 boolean vertexOutside(PVector v) { return v.x < 0 || v.x > width || v.y < 0 || v.y > height; }  
 
 //Display the mesh of triangles  
 void displayMesh()
 {
-    Triangle t = new Triangle();
+    Triangle t = new Triangle(); //<>//
     beginShape(TRIANGLES);
     for (int i = 0; i < triangles.size(); i++)
     {
