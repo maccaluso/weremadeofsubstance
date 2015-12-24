@@ -1,18 +1,24 @@
+import processing.sound.*; //<>//
 
 import java.util.List;
 import java.util.LinkedList;
 
-int W = displayWidth, H = displayHeight;
+int W = 1024, H = 256;
 int[] colors;
 ArrayList<Triangle> triangles;
-int triangle_index =0;
+int triangle_index = 0;
+
+AudioFeed audio;
+
 void setup() 
 {
-    size(displayWidth, displayHeight);
+    size(1024, 256);
     smooth();
     
     //here for all dataset
-    PImage buffer = loadImage("tomatoes.jpg");
+    PImage buffer = loadImage("06.jpg");
+    
+    audio = new AudioFeed(this);
 
     //Extract significant points of the picture
     ArrayList<PVector> vertices = new ArrayList<PVector>();
@@ -48,12 +54,17 @@ void setup()
     }
     
     //And display the result
-    displayMesh();
+    //displayMesh();
 }
 
 void draw() {  // draw() loops forever, until stopped
-  background(204);
-    
+  //background(204);
+    println( audio.getSpectrum() );
+    //audio.getSpectrum();
+    if(triangle_index == triangles.size())
+    {
+      return;
+    }
     Triangle t = new Triangle();
     beginShape(TRIANGLES);
      t = triangles.get(triangle_index); 
@@ -61,10 +72,9 @@ void draw() {  // draw() loops forever, until stopped
      stroke(colors[triangle_index]);
      vertex(t.p1.x,t.p1.y);
      vertex(t.p2.x, t.p2.y);
-     vertex(t.p3.x, t.p3.y;
+     vertex(t.p3.x, t.p3.y);
     endShape();
     triangle_index++;
-    if(triangle_index > t.s)
 }
 
 
@@ -74,7 +84,7 @@ boolean vertexOutside(PVector v) { return v.x < 0 || v.x > width || v.y < 0 || v
 //Display the mesh of triangles  
 void displayMesh()
 {
-    Triangle t = new Triangle(); //<>//
+    Triangle t = new Triangle();
     beginShape(TRIANGLES);
     for (int i = 0; i < triangles.size(); i++)
     {

@@ -71,7 +71,7 @@ public static class CircumCircle
 static class LineIntersector {
   
   //Epsilon value to perform accurate floating-point arithmetics
-  static final float e = 1e-5;
+  static final double e = 1e-5;
 
   //Check intersection and calculates intersection point, storing it in a reference passed to the method
   static boolean intersect (float a_x1, float a_y1, float a_x2, float a_y2, 
@@ -219,7 +219,7 @@ class Triangulator
       
       //Include each point one at a time into the existing mesh
       ArrayList<Edge> edges = new ArrayList<Edge>();
-      int ts;
+      //int ts;
       PVector circle;
       boolean inside;
   
@@ -314,7 +314,7 @@ class Triangulator
       
       //Include each point one at a time into the existing mesh
       ArrayList<Edge> edges = new ArrayList<Edge>();
-      int ts;
+      //int ts;
       PVector circle;
       boolean inside;
   
