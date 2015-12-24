@@ -4,15 +4,22 @@ import java.util.LinkedList;
 
 int W = displayWidth, H = displayHeight;
 int[] colors;
-ArrayList<Triangle> triangles;
-int triangle_index =0;
+
+ArrayList<ArrayList<Triangle>> all_triangles;
+int indx_triangle_to_draw =0;
+int indx_image_to_draw = 0;
+float scale = 1.6;
 void setup() 
 {
     size(displayWidth, displayHeight);
     smooth();
+    all_triangles = new ArrayList<ArrayList<Triangle>> ();
     
+  for(int indx_photo=0; indx_photo <2; indx_photo++)
+  {
     //here for all dataset
-    PImage buffer = loadImage("tomatoes.jpg");
+    String file_name = "img_"+indx_photo+".jpg";
+    PImage buffer = loadImage(file_name);
 
     //Extract significant points of the picture
     ArrayList<PVector> vertices = new ArrayList<PVector>();
@@ -28,7 +35,7 @@ void setup()
  
     //Get the triangles using qhull algorithm. 
     //The algorithm is a custom refactoring of Triangulate library by Florian Jennet  
-    triangles = new ArrayList<Triangle>();
+   ArrayList<Triangle> triangles = new ArrayList<Triangle>();
     new Triangulator().triangulate(vertices, triangles);
     
     //Prune triangles with vertices outside of the canvas.
@@ -47,46 +54,64 @@ void setup()
         colors[i] = buffer.get(int(c.x), int(c.y));
     }
     
-    //And display the result
-    displayMesh();
+    all_triangles.add(triangles);
+  }
+ println( all_triangles.size());
+    
+    
+ 
 }
 
 void draw() {  // draw() loops forever, until stopped
-  background(204);
+  //
+    println(indx_image_to_draw);
+      ArrayList<Triangle> current_image =  all_triangles.get(indx_image_to_draw);
+        
+        Triangle t = new Triangle();
+        beginShape(TRIANGLES);
+         t = current_image.get(indx_triangle_to_draw);  //<>//
+         fill(colors[indx_triangle_to_draw]);
+         stroke(colors[indx_triangle_to_draw]);
+         vertex(t.p1.x*scale,t.p1.y*scale); //<>//
+         vertex(t.p2.x*scale, t.p2.y*scale);
+         vertex(t.p3.x*scale, t.p3.y*scale);
+        endShape();
+        indx_triangle_to_draw++;
+        if(indx_triangle_to_draw == current_image.size())
+        {
+          indx_image_to_draw++;
+          background(204);
+          if(indx_image_to_draw  ==all_triangles.size() )
+          {
+            indx_image_to_draw =0;
+            indx_triangle_to_draw =0;
+          }
+          
+        }
     
-    Triangle t = new Triangle();
-    beginShape(TRIANGLES);
-     t = triangles.get(triangle_index); 
-     fill(colors[triangle_index]);
-     stroke(colors[triangle_index]);
-     vertex(t.p1.x,t.p1.y);
-     vertex(t.p2.x, t.p2.y);
-     vertex(t.p3.x, t.p3.y;
-    endShape();
-    triangle_index++;
-    if(triangle_index > t.s)
+   
 }
 
 
 //Util function to prune triangles with vertices out of bounds  
 boolean vertexOutside(PVector v) { return v.x < 0 || v.x > width || v.y < 0 || v.y > height; }  
 
-//Display the mesh of triangles  
-void displayMesh()
-{
-    Triangle t = new Triangle(); //<>//
-    beginShape(TRIANGLES);
-    for (int i = 0; i < triangles.size(); i++)
-    {
-        t = triangles.get(i); 
-        fill(colors[i]);
-        stroke(colors[i]);
-        vertex(t.p1.x,t.p1.y);
-        vertex(t.p2.x, t.p2.y);
-        vertex(t.p3.x, t.p3.y);
-    }
-    endShape();
-}  
+////Display the mesh of triangles  
+//void displayMesh()
+//{
+//    Triangle t = new Triangle(); //<>//
+//    beginShape(TRIANGLES);
+//    for (int i = 0; i < triangles.size(); i++)
+//    {
+//        t = triangles.get(i); 
+//        fill(colors[i]);
+//        stroke(colors[i]);
+//        vertex(t.p1.x,t.p1.y);
+//        vertex(t.p2.x, t.p2.y);
+//        vertex(t.p3.x, t.p3.y);
+//    }
+//    endShape();
+//}  
 
   
   
