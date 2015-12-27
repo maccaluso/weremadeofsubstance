@@ -2,24 +2,26 @@
 import java.util.List;
 import java.util.LinkedList;
 
-int W = displayWidth, H = displayHeight;
+int W = 1024, H = 256;
 int[] colors;
 
 ArrayList<ArrayList<Triangle>> all_triangles;
 int indx_triangle_to_draw =0;
 int indx_image_to_draw = 0;
-float scale = 1.6;
+float scale = 1;
+String folder_images = "1024x256/";
+int total_images = 27;
 void setup() 
 {
-    size(displayWidth, displayHeight);
+    size(1024, 256);
     smooth();
     all_triangles = new ArrayList<ArrayList<Triangle>> ();
     
-  for(int indx_photo=0; indx_photo <2; indx_photo++)
+  for(int indx_photo=1; indx_photo <=total_images; indx_photo++)
   {
     //here for all dataset
-    String file_name = "img_"+indx_photo+".jpg";
-    PImage buffer = loadImage(file_name);
+    String image_file_name = (indx_photo <=9) ? "0"+indx_photo+".jpg": indx_photo+".jpg";
+    PImage buffer = loadImage(folder_images+image_file_name);
 
     //Extract significant points of the picture
     ArrayList<PVector> vertices = new ArrayList<PVector>();
@@ -95,23 +97,7 @@ void draw() {  // draw() loops forever, until stopped
 
 //Util function to prune triangles with vertices out of bounds  
 boolean vertexOutside(PVector v) { return v.x < 0 || v.x > width || v.y < 0 || v.y > height; }  
-
-////Display the mesh of triangles  
-//void displayMesh()
-//{
-//    Triangle t = new Triangle(); //<>//
-//    beginShape(TRIANGLES);
-//    for (int i = 0; i < triangles.size(); i++)
-//    {
-//        t = triangles.get(i); 
-//        fill(colors[i]);
-//        stroke(colors[i]);
-//        vertex(t.p1.x,t.p1.y);
-//        vertex(t.p2.x, t.p2.y);
-//        vertex(t.p3.x, t.p3.y);
-//    }
-//    endShape();
-//}  
+ //<>//
 
   
   
