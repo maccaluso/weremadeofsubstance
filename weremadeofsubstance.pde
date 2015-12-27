@@ -1,10 +1,9 @@
- //<>// //<>// //<>//
-import java.util.List;
+import java.util.List; //<>//
 import java.util.LinkedList;
 
 int W = 1024, H = 256;
 
-
+int bpm = 25;
 ArrayList<ArrayList<Triangle>> all_triangles;
 ArrayList<int[]> all_colors;
 int indx_triangle_to_draw =0;
@@ -12,7 +11,6 @@ int indx_image_to_draw = 0;
 float scale = 1;
 String folder_images = "1024x256/";
 int total_images = 27;
-
 void setup() 
 {
   size(1024, 256);
@@ -67,11 +65,10 @@ void setup()
 
 void draw() {  // draw() loops forever, until stopped
   //
+  frameRate(bpm);
   println(indx_image_to_draw);
-  
-  
-  
   ArrayList<Triangle> current_image =  all_triangles.get(indx_image_to_draw);
+
   Triangle t = new Triangle();
   beginShape(TRIANGLES);
   t = current_image.get(indx_triangle_to_draw); 
@@ -89,7 +86,10 @@ void draw() {  // draw() loops forever, until stopped
     indx_triangle_to_draw =0;
   }
 }
-
+void keyPressed() {
+  bpm = key;
+  
+  }
 
 //Util function to prune triangles with vertices out of bounds  
 boolean vertexOutside(PVector v) { 
