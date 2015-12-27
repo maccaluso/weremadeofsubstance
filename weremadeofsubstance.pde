@@ -12,6 +12,7 @@ int indx_image_to_draw = 0;
 float scale = 1;
 String folder_images = "1024x256/";
 int total_images = 27;
+
 void setup() 
 {
   size(1024, 256);
@@ -67,8 +68,10 @@ void setup()
 void draw() {  // draw() loops forever, until stopped
   //
   println(indx_image_to_draw);
+  
+  
+  
   ArrayList<Triangle> current_image =  all_triangles.get(indx_image_to_draw);
-
   Triangle t = new Triangle();
   beginShape(TRIANGLES);
   t = current_image.get(indx_triangle_to_draw); 
