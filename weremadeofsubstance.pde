@@ -1,5 +1,6 @@
-import java.util.List; //<>//
+import java.util.List; //<>// //<>//
 import java.util.LinkedList;
+import java.io.IOException;
 
 int W = 1024, H = 256;
 
@@ -10,19 +11,22 @@ int indx_triangle_to_draw =0;
 int indx_image_to_draw = 0;
 float scale = 1;
 String folder_images = "1024x256/";
-int total_images = 27;
+String path_data = "/Users/riccardospezialetti/Desktop/PROCESSING/workspace_processing/weremadeofsubstance/data/";
+String []list_images;
 void setup() 
 {
   size(1024, 256);
   smooth();
   all_triangles = new ArrayList<ArrayList<Triangle>> ();
   all_colors = new ArrayList<int[]> ();
-
-  for (int indx_photo=1; indx_photo <=total_images; indx_photo++)
+  File folder = new File(path_data+folder_images); 
+  list_images = folder.list(); //<>//
+   //<>//
+  for (int indx_photo=0; indx_photo <list_images.length; indx_photo++)
   {
     //here for all dataset
-    String image_file_name = (indx_photo <=9) ? "0"+indx_photo+".jpg": indx_photo+".jpg";
-    PImage buffer = loadImage(folder_images+image_file_name);
+    
+    PImage buffer = loadImage(folder_images+list_images[indx_photo]);
 
     //Extract significant points of the picture
     ArrayList<PVector> vertices = new ArrayList<PVector>();
@@ -67,6 +71,9 @@ void draw() {  // draw() loops forever, until stopped
   //
   frameRate(bpm);
   println(indx_image_to_draw);
+  if(indx_image_to_draw == list_images.length)
+    indx_image_to_draw = 0;
+    
   ArrayList<Triangle> current_image =  all_triangles.get(indx_image_to_draw);
 
   Triangle t = new Triangle();
@@ -88,8 +95,7 @@ void draw() {  // draw() loops forever, until stopped
 }
 void keyPressed() {
   bpm = key;
-  
-  }
+}
 
 //Util function to prune triangles with vertices out of bounds  
 boolean vertexOutside(PVector v) { 
