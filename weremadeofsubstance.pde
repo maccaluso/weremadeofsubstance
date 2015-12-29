@@ -1,11 +1,15 @@
-import processing.sound.*; //<>// //<>//
+import processing.sound.*; //<>// //<>// //<>//
 
-import java.util.List; //<>// //<>//
+import java.util.List; //<>//
 import java.util.LinkedList;
+import java.util.Arrays;
 import java.io.IOException;
 
-int W = 1024, H = 256;
 
+int W = 1024, H = 256;
+int BACKGROUND_COLOR = 44;
+//da settare in base alla visibilità minima del proiettore
+int min_alpha = 50, max_alpha = 255;
 int bpm = 25;
 ArrayList<ArrayList<Triangle>> all_triangles;
 ArrayList<int[]> all_colors;
@@ -16,14 +20,17 @@ String folder_images = "1024x256/";
 String path_data = "/Users/riccardospezialetti/Desktop/PROCESSING/workspace_processing/weremadeofsubstance/data/";
 String []list_images;
 boolean single_image = false;
-boolean reload = true;
+boolean drawing_mode_changed = false;
+boolean new_image = true;
 float ratio = 1.689;
 AudioFeed audio_feed;
-
+int count=0;
+int [] indices_visible;
+boolean [] indices_sub;
 void triangulate_all_images(ArrayList<ArrayList<Triangle>> all_triangles, ArrayList<int[]> all_colors)
 {
-  
-  
+
+
   for (int indx_photo=0; indx_photo <list_images.length; indx_photo++)
   {
     int edge_factor = (int)random(4, 30);
@@ -70,12 +77,12 @@ void triangulate_all_images(ArrayList<ArrayList<Triangle>> all_triangles, ArrayL
     }
     //println( all_triangles.size());
   }
-  reload = false;
+
 }
 void setup() 
 {
   size(1024, 512);
-  background(0);
+  background(BACKGROUND_COLOR);
   smooth();
 
   File folder = new File(path_data+folder_images); 
@@ -87,39 +94,68 @@ void setup()
 
 void draw() {  // draw() loops forever, until stopped
   //
+  frameRate(bpm);
   if (indx_image_to_draw == list_images.length)
   {
     indx_image_to_draw = 0;
-    reload = true;
-  }  
-  if (reload)
-  {
-
     all_triangles = new ArrayList<ArrayList<Triangle>> ();
     all_colors = new ArrayList<int[]> ();
     triangulate_all_images(all_triangles, all_colors);
     indx_triangle_to_draw = 0;
+  }  
+  
+  ArrayList<Triangle> current_image = all_triangles.get(indx_image_to_draw);
+  int [] current_colors = all_colors.get(indx_image_to_draw);
+
+  if (drawing_mode_changed || new_image)
+  {
+      drawing_mode_changed = false;
+      new_image = false;
+      count = current_image.size();
+      indices_visible = new int [current_image.size()];
+      indices_sub = new boolean[current_image.size()];
+      Arrays.fill(indices_sub,false);
   }
 
-
-  frameRate(bpm);
-  //println(indx_image_to_draw);
-
-
-  ArrayList<Triangle> current_image;
   //drawImage(current_image,all_colors.get(temp));
   if (single_image)
   {
-    int temp=4;
-    current_image =  all_triangles.get(temp);
-    drawImageRandomAlpha(current_image, all_colors.get(temp));
+
+
+    int indx_random = (int)random(0, current_image.size());
+    int alpha_random = (int)random(min_alpha, max_alpha); 
+    Triangle t = new Triangle();
+    t = current_image.get(indx_random); 
+    color triangle_color = color(current_colors[indx_random]);    
+
+    drawTriangleAlpha(t, triangle_color, alpha_random);
+    indices_visible[indx_random] += alpha_random;
+    
+    if (indices_visible[indx_random] > 200 &&  !indices_sub[indx_random] )
+    {
+      
+      count--;
+      indices_sub[indx_random] = true;
+      println(count);
+      if (count == 20)
+      {
+        indx_image_to_draw++;
+        new_image = true;
+        print("CHANGE");
+        background(BACKGROUND_COLOR); //<>//
+        delay(1000);
+      }
+    }
+  
+     
+      
   } else
   {
-    current_image = all_triangles.get(indx_image_to_draw);
+    //current_image = all_triangles.get(indx_image_to_draw);
     Triangle t = new Triangle();
     beginShape(TRIANGLES);
     t = current_image.get(indx_triangle_to_draw); 
-    int [] current_colors = all_colors.get(indx_image_to_draw);
+    //  current_colors = all_colors.get(indx_image_to_draw);
     fill(current_colors[indx_triangle_to_draw]);
     stroke(current_colors[indx_triangle_to_draw]);
     vertex(t.p1.x*scale, t.p1.y*scale);
@@ -133,13 +169,17 @@ void draw() {  // draw() loops forever, until stopped
       indx_triangle_to_draw =0;
     }
   }
-  
-  rect(30, 20, 55, 55, 7);
 }
 void keyPressed() {
   bpm = key;
-  if (key == 'R')
-    reload = true;
+  if (key == 'S')
+  {
+    background(BACKGROUND_COLOR);
+    single_image  = !single_image;
+    drawing_mode_changed = true;
+    indx_image_to_draw++;
+    indx_triangle_to_draw = 0;
+  }
 }
 
 //Util function to prune triangles with vertices out of bounds  
@@ -162,17 +202,12 @@ void drawImage(ArrayList<Triangle> image_to_draw, int [] colors)
     endShape();
   }
 }
-void drawImageRandomAlpha(ArrayList<Triangle> image_to_draw, int [] colors)
+void drawTriangleAlpha(Triangle t, color color_triangle, int alpha_random)
 {
-  int indx_random = (int)random(0, image_to_draw.size());
-  float alpha_random = random(20, 180);  
-  Triangle t = new Triangle();
 
   beginShape(TRIANGLES);
-  t = image_to_draw.get(indx_random); 
-  fill(colors[indx_random], alpha_random);
-  stroke(colors[indx_random], alpha_random);
-
+  fill(color_triangle, alpha_random);
+  stroke(color_triangle, alpha_random);
   vertex(t.p1.x*scale, t.p1.y*scale);
   vertex(t.p2.x*scale, t.p2.y*scale);
   vertex(t.p3.x*scale, t.p3.y*scale);
